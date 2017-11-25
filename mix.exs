@@ -20,7 +20,10 @@ defmodule SimpleMarkdownExtensionCLI.Mixfile do
 
     # Run "mix help deps" to learn about dependencies.
     defp deps do
-        [{ :simple_markdown, "~> 0.3.0" }]
+        [
+            { :simple_markdown, "~> 0.3.0" },
+            { :ex_doc, "~> 0.18", only: :dev }
+        ]
     end
 
     defp package do
