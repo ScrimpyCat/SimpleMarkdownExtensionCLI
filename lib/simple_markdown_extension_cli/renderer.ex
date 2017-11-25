@@ -1,5 +1,23 @@
 defprotocol SimpleMarkdownExtensionCLI.Renderer do
+    @moduledoc """
+      A renderer protocol for ANSI escaped text.
+
+      Individual rule renderers can be overriden or new ones may be
+      added. Works in the same way as `SimpleMarkdown.Renderer.HTML`.
+
+      Example
+      -------
+        defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Code do
+            def render(%{ input: input }), do: IO.ANSI.cyan <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset
+        end
+    """
+
     @fallback_to_any true
+
+    @doc """
+      Render the parsed markdown as ANSI escaped text.
+    """
+    @spec render([SimpleMarkdown.attribute | String.t] | SimpleMarkdown.attribute | String.t) :: String.t
     def render(ast)
 end
 
