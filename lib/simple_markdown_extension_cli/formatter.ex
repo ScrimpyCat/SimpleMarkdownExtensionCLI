@@ -53,8 +53,10 @@ defmodule SimpleMarkdownExtensionCLI.Formatter do
         |> Enum.join()
     end
 
+    @spec remove_ansi_codes(String.t) :: String.t
     defp remove_ansi_codes(string), do: String.replace(string, ~r/(\x9b|\x1b\[)[0-?]*[ -\/]*[@-~]/, "")
 
+    @spec fixed_width_inputs([SimpleMarkdown.attribute | String.t], [String.t]) :: [String.t]
     defp fixed_width_inputs(ast, inputs \\ [])
     defp fixed_width_inputs(%{ input: [] }, inputs), do: inputs
     defp fixed_width_inputs(ast = %{ __struct__: name }, inputs) when name in [SimpleMarkdown.Attribute.Code, SimpleMarkdown.Attribute.PreformattedCode] do
@@ -63,6 +65,7 @@ defmodule SimpleMarkdownExtensionCLI.Formatter do
     defp fixed_width_inputs(ast = %{}, inputs), do: Enum.reduce(ast.input, inputs, &fixed_width_inputs/2)
     defp fixed_width_inputs(_, inputs), do: inputs
 
+    @spec tokenize([String.t | { :fixed, String.t }], [String.t]) :: [String.t | { :fixed, String.t }]
     defp tokenize(tokens, []), do: tokens
     defp tokenize(tokens, [input|inputs]) do
         Enum.reduce(tokens, [], fn
