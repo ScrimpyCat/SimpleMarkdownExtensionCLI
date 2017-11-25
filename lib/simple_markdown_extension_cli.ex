@@ -1,0 +1,2 @@
+defmodule SimpleMarkdownExtensionCLI do
+end
