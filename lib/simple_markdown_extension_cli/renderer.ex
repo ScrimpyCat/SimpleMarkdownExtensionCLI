@@ -46,6 +46,22 @@ defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Heade
     def render(%{ input: input }), do: IO.ANSI.bright <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset
 end
 
+defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.List do
+    def render(%{ input: input, option: :unordered }) do
+        Enum.map(input, fn item ->
+            "• " <> SimpleMarkdownExtensionCLI.Renderer.render(item)
+        end)
+        |> Enum.join("\n")
+    end
+    def render(%{ input: input, option: :ordered }) do
+        Enum.with_index(input, 1)
+        |> Enum.map(fn { item, number } ->
+            "#{number}) " <> SimpleMarkdownExtensionCLI.Renderer.render(item)
+        end)
+        |> Enum.join("\n")
+    end
+end
+
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.PreformattedCode do
     def render(%{ input: input }), do: "\n    " <> IO.ANSI.cyan <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset <> "\n\n"
 end
