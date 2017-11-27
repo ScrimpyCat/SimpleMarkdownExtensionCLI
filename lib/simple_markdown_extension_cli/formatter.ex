@@ -28,27 +28,31 @@ defmodule SimpleMarkdownExtensionCLI.Formatter do
     @spec format([SimpleMarkdown.attribute | String.t], integer) :: String.t
     def format(ast, width) do
         Enum.map(ast, fn node ->
-            line = SimpleMarkdownExtensionCLI.Renderer.render(node)
-            tokenize([line], Enum.sort(fixed_width_inputs(node), &(String.length(&1) > String.length(&2))))
-            |> Enum.filter(&(&1 != ""))
-            |> Enum.reduce("", fn
-                { :fixed, string }, acc -> acc <> string
-                string, acc ->
-                    String.split(string, " ")
-                    |> Enum.intersperse(" ")
-                    |> Enum.chunk_while(acc, fn
-                        " ", acc -> { :cont, acc <> " " }
-                        word, "" -> { :cont, word }
-                        word, acc ->
-                            if String.length(remove_ansi_codes(word)) + String.length(remove_ansi_codes(acc)) >= width do
-                                { :cont, String.trim(acc), word }
-                            else
-                                { :cont, acc <> word }
-                        end
-                    end, &({ :cont, &1, "" }))
-                    |> Enum.map(&String.trim_leading/1)
-                    |> Enum.join("\n")
+            SimpleMarkdownExtensionCLI.Renderer.render(node)
+            |> String.split("\n")
+            |> Enum.map(fn line ->
+                tokenize([line], Enum.sort(fixed_width_inputs(node), &(String.length(&1) > String.length(&2))))
+                |> Enum.filter(&(&1 != ""))
+                |> Enum.reduce("", fn
+                    { :fixed, string }, acc -> acc <> string
+                    string, acc ->
+                        String.split(string, " ")
+                        |> Enum.intersperse(" ")
+                        |> Enum.chunk_while(acc, fn
+                            " ", acc -> { :cont, acc <> " " }
+                            word, "" -> { :cont, word }
+                            word, acc ->
+                                if String.length(remove_ansi_codes(word)) + String.length(remove_ansi_codes(acc)) >= width do
+                                    { :cont, String.trim(acc), word }
+                                else
+                                    { :cont, acc <> word }
+                            end
+                        end, &({ :cont, &1, "" }))
+                        |> Enum.map(&String.trim_leading/1)
+                        |> Enum.join("\n")
+                end)
             end)
+            |> Enum.join("\n")
         end)
         |> Enum.join()
     end
