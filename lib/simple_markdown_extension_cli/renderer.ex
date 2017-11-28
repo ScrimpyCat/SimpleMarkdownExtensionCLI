@@ -29,8 +29,11 @@ end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: List do
     def render(ast) do
-        Enum.reduce(ast, "", fn attribute, string ->
-            string <> SimpleMarkdownExtensionCLI.Renderer.render(attribute)
+        Enum.reduce(ast, "", fn
+            attribute = %{ __struct__: SimpleMarkdown.Attribute.PreformattedCode }, string when bit_size(string) > 0 ->
+                if(String.ends_with?(string, "\n"), do: string, else: string <> "\n") <> SimpleMarkdownExtensionCLI.Renderer.render(attribute)
+            attribute, string ->
+                string <> SimpleMarkdownExtensionCLI.Renderer.render(attribute)
         end)
     end
 end
@@ -44,7 +47,7 @@ defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.LineB
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Header do
-    def render(%{ input: input }), do: IO.ANSI.bright <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset <> "\n\n"
+    def render(%{ input: input }), do: IO.ANSI.bright <> String.trim(SimpleMarkdownExtensionCLI.Renderer.render(input)) <> IO.ANSI.reset <> "\n\n"
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.List do
@@ -68,7 +71,7 @@ defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.List 
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.PreformattedCode do
-    def render(%{ input: input }), do: "\n    " <> IO.ANSI.cyan <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset <> "\n\n"
+    def render(%{ input: input }), do: "    " <> IO.ANSI.cyan <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset <> "\n\n"
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Paragraph do

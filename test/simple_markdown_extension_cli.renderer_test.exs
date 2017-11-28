@@ -20,9 +20,20 @@ defmodule SimpleMarkdownExtensionCLI.RendererTest do
     end
 
     test "rendering preformatted code" do
-        assert "\n    #{IO.ANSI.cyan}test#{IO.ANSI.reset}\n\n" == [{ :preformatted_code, ["test"] }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
-        assert "\n    #{IO.ANSI.cyan}<test>#{IO.ANSI.reset}\n\n" == [{ :preformatted_code, ["<test>"] }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
-        assert "\n    #{IO.ANSI.cyan}test#{IO.ANSI.reset}\n\n" == [{ :preformatted_code, ["test"], :syntax }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
+        assert "    #{IO.ANSI.cyan}test#{IO.ANSI.reset}\n\n" == [{ :preformatted_code, ["test"] }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
+        assert "    #{IO.ANSI.cyan}<test>#{IO.ANSI.reset}\n\n" == [{ :preformatted_code, ["<test>"] }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
+        assert "    #{IO.ANSI.cyan}test#{IO.ANSI.reset}\n\n" == [{ :preformatted_code, ["test"], :syntax }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
+
+        assert "a\n    #{IO.ANSI.cyan}test#{IO.ANSI.reset}\n\n" == """
+        a
+            test
+        """ |> SimpleMarkdown.convert(render: &SimpleMarkdownExtensionCLI.Renderer.render/1)
+
+        assert "a\n\n    #{IO.ANSI.cyan}test#{IO.ANSI.reset}\n\n" == """
+        a
+
+            test
+        """ |> SimpleMarkdown.convert(render: &SimpleMarkdownExtensionCLI.Renderer.render/1)
     end
 
     test "rendering paragraph" do
