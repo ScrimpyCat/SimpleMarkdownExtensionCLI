@@ -29,13 +29,14 @@ end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: List do
     def render(ast) do
-        Enum.map(ast, &SimpleMarkdownExtensionCLI.Renderer.render/1)
-        |> Enum.join(" ")
+        Enum.reduce(ast, "", fn attribute, string ->
+            string <> SimpleMarkdownExtensionCLI.Renderer.render(attribute)
+        end)
     end
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: BitString do
-    def render(string), do: String.trim(string)
+    def render(string), do: string
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.LineBreak do
@@ -43,22 +44,26 @@ defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.LineB
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Header do
-    def render(%{ input: input }), do: IO.ANSI.bright <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset
+    def render(%{ input: input }), do: IO.ANSI.bright <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset <> "\n\n"
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.List do
     def render(%{ input: input, option: :unordered }) do
-        Enum.map(input, fn item ->
+        list = Enum.map(input, fn item ->
             "• " <> SimpleMarkdownExtensionCLI.Renderer.render(item)
         end)
         |> Enum.join("\n")
+
+        list <> "\n\n"
     end
     def render(%{ input: input, option: :ordered }) do
-        Enum.with_index(input, 1)
+        list = Enum.with_index(input, 1)
         |> Enum.map(fn { item, number } ->
             "#{number}) " <> SimpleMarkdownExtensionCLI.Renderer.render(item)
         end)
         |> Enum.join("\n")
+
+        list <> "\n\n"
     end
 end
 
