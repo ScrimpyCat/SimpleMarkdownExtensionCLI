@@ -75,7 +75,14 @@ defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Prefo
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Paragraph do
-    def render(%{ input: input }), do: String.trim(SimpleMarkdownExtensionCLI.Renderer.render(input)) <> "\n\n"
+    def render(%{ input: input }) do
+        input = Enum.map(input, fn
+            string when is_binary(string) -> String.replace(string, ~r/ +/, " ")
+            node -> node
+        end)
+
+        String.trim(SimpleMarkdownExtensionCLI.Renderer.render(input)) <> "\n\n"
+    end
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Code do

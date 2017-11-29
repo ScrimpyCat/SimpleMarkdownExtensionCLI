@@ -38,6 +38,11 @@ defmodule SimpleMarkdownExtensionCLI.RendererTest do
 
     test "rendering paragraph" do
         assert "test\n\n" == [{ :paragraph, ["test"] }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
+
+        assert "a test\n\n" == """
+          a
+          test
+        """ |> SimpleMarkdown.convert(render: &SimpleMarkdownExtensionCLI.Renderer.render/1)
     end
 
     test "rendering code" do
