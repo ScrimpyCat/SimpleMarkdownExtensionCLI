@@ -1,18 +1,31 @@
 defmodule SimpleMarkdownExtensionCLI.Formatter do
     @doc """
       Format the text output to fit the width of the CLI window.
-
-        iex> SimpleMarkdown.convert("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", render: &SimpleMarkdownExtensionCLI.Formatter.format/1)
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\\n\\n"
-
-        iex> SimpleMarkdown.convert("Lorem ipsum `dolor sit amet, consectetur` adipiscing `elit, sed do eiusmod` tempor incididunt ut `labore` et dolore magna aliqua.", render: &SimpleMarkdownExtensionCLI.Formatter.format/1)
-        "Lorem ipsum \\e[36mdolor sit amet, consectetur\\e[0m adipiscing \\e[36melit, sed do eiusmod\\e[0m tempor incididunt ut \\e[36mlabore\\e[0m et dolore magna aliqua.\\n\\n"
     """
     @spec format([SimpleMarkdown.attribute | String.t]) :: String.t
     def format(ast) do
+        case get_width() do
+            nil -> SimpleMarkdownExtensionCLI.Renderer.render(ast)
+            width -> format(ast, width)
+        end
+    end
+
+    @spec get_width() :: integer | nil
+    defp get_width() do
         case :io.columns() do
-            { :ok, width } -> format(ast, width)
-            _ -> SimpleMarkdownExtensionCLI.Renderer.render(ast)
+            { :ok, width } -> width
+            _ ->
+                with true <- is_binary(System.find_executable("tput")),
+                     { width, 0 } <- System.cmd("tput", ["cols"]) do
+                        width = String.replace(width, "\n", "")
+                        try do
+                            width
+                        catch
+                            _ -> nil
+                        end
+                else
+                    _ -> nil
+                end
         end
     end
 
