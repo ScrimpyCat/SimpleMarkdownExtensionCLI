@@ -64,7 +64,7 @@ defmodule SimpleMarkdownExtensionCLI.Formatter do
     defp fixed_width_inputs(ast, inputs \\ [])
     defp fixed_width_inputs(%{ input: [] }, inputs), do: inputs
     defp fixed_width_inputs(ast = %{ __struct__: name }, inputs) when name in [SimpleMarkdown.Attribute.Code, SimpleMarkdown.Attribute.PreformattedCode] do
-        [SimpleMarkdownExtensionCLI.Renderer.render(ast)|inputs]
+        [String.trim_trailing(SimpleMarkdownExtensionCLI.Renderer.render(ast), "\n")|inputs]
     end
     defp fixed_width_inputs(ast = %{}, inputs), do: Enum.reduce(ast.input, inputs, &fixed_width_inputs/2)
     defp fixed_width_inputs(_, inputs), do: inputs
