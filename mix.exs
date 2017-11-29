@@ -5,7 +5,7 @@ defmodule SimpleMarkdownExtensionCLI.Mixfile do
         [
             app: :simple_markdown_extension_cli,
             description: "An extension for SimpleMarkdown to add renderer for CLI output.",
-            version: "0.1.2",
+            version: "0.1.3",
             elixir: "~> 1.5",
             start_permanent: Mix.env == :prod,
             deps: deps(),
