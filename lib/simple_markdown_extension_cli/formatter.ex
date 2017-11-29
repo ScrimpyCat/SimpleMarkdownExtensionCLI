@@ -20,7 +20,7 @@ defmodule SimpleMarkdownExtensionCLI.Formatter do
                         width = String.replace(width, "\n", "")
                         try do
                             String.to_integer(width)
-                        catch
+                        rescue
                             _ -> nil
                         end
                 else
