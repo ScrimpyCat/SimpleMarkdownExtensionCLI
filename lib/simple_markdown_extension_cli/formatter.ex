@@ -19,7 +19,7 @@ defmodule SimpleMarkdownExtensionCLI.Formatter do
                      { width, 0 } <- System.cmd("tput", ["cols"]) do
                         width = String.replace(width, "\n", "")
                         try do
-                            width
+                            String.to_integer(width)
                         catch
                             _ -> nil
                         end
