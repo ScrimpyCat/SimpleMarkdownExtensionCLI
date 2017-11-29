@@ -51,7 +51,7 @@ defmodule SimpleMarkdownExtensionCLI.RendererTest do
     end
 
     test "rendering examples" do
-        assert "#{IO.ANSI.bright}Heading#{IO.ANSI.reset}\n\n#{IO.ANSI.bright}Sub-heading#{IO.ANSI.reset}\n\n#{IO.ANSI.bright}Another deeper heading#{IO.ANSI.reset}\n\nParagraphs are separatedby a blank line.\n\nTwo spaces at the end of a line leave a\nline break.\n\nText attributes italic, bold, #{IO.ANSI.cyan}monospace#{IO.ANSI.reset}.\n\nBullet list:\n\n• apples\n• oranges\n• pears\n\nNumbered list:\n\n1) apples\n2) oranges\n3) pears\n\nA link.\n\n" == [
+        assert "#{IO.ANSI.bright}Heading#{IO.ANSI.reset}\n\n#{IO.ANSI.bright}Sub-heading#{IO.ANSI.reset}\n\n#{IO.ANSI.bright}Another deeper heading#{IO.ANSI.reset}\n\nParagraphs are separatedby a blank line.\n\nTwo spaces at the end of a line leave a\nline break.\n\nText attributes italic, bold, #{IO.ANSI.cyan}monospace#{IO.ANSI.reset}.\n\nBullet list:\n\n• apples\n• oranges\n• pears\n\nNumbered list:\n\n1) apples\n2) oranges\n3) pears\n\nA link (http://example.com).\n\n" == [
             { :header, ["Heading"], 1 },
             { :header, ["Sub-heading"], 2 },
             { :header, ["Another deeper heading"], 3 },

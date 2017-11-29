@@ -85,6 +85,10 @@ defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Parag
     end
 end
 
+defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Link do
+    def render(%{ input: input, option: url }), do: "#{SimpleMarkdownExtensionCLI.Renderer.render(input)} (#{url})"
+end
+
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: SimpleMarkdown.Attribute.Code do
     def render(%{ input: input }), do: IO.ANSI.cyan <> SimpleMarkdownExtensionCLI.Renderer.render(input) <> IO.ANSI.reset
 end
