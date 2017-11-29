@@ -17,6 +17,19 @@ defmodule SimpleMarkdownExtensionCLI.RendererTest do
     test "rendering list" do
         assert "• a\n• b\n\n" == [{ :list, [{ :item, ["a"] }, { :item, ["b"] }], :unordered }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
         assert "1) a\n2) b\n\n" == [{ :list, [{ :item, ["a"] }, { :item, ["b"] }], :ordered }] |> SimpleMarkdown.ast_to_structs |> SimpleMarkdownExtensionCLI.Renderer.render
+
+        assert "a\n• a\n• b\n\n" == """
+        a
+        * a
+        * b
+        """ |> SimpleMarkdown.convert(render: &SimpleMarkdownExtensionCLI.Renderer.render/1)
+
+        assert "a\n\n• a\n• b\n\n" == """
+        a
+
+        * a
+        * b
+        """ |> SimpleMarkdown.convert(render: &SimpleMarkdownExtensionCLI.Renderer.render/1)
     end
 
     test "rendering preformatted code" do

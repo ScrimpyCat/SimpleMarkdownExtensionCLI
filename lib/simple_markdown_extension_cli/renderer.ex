@@ -28,9 +28,13 @@ defimpl SimpleMarkdownExtensionCLI.Renderer, for: Any do
 end
 
 defimpl SimpleMarkdownExtensionCLI.Renderer, for: List do
+    @newline_attributes [
+        SimpleMarkdown.Attribute.PreformattedCode,
+        SimpleMarkdown.Attribute.List
+    ]
     def render(ast) do
         Enum.reduce(ast, "", fn
-            attribute = %{ __struct__: SimpleMarkdown.Attribute.PreformattedCode }, string when bit_size(string) > 0 ->
+            attribute = %{ __struct__: name }, string when name in @newline_attributes and bit_size(string) > 0 ->
                 if(String.ends_with?(string, "\n"), do: string, else: string <> "\n") <> SimpleMarkdownExtensionCLI.Renderer.render(attribute)
             attribute, string ->
                 string <> SimpleMarkdownExtensionCLI.Renderer.render(attribute)
