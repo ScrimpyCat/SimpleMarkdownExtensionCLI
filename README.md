@@ -6,6 +6,6 @@ Installation
 
 ```elixir
 def deps do
-    [{ :simple_markdown_extension_cli, "~> 0.1.3" }]
+    [{ :simple_markdown_extension_cli, "~> 0.1.4" }]
 end
 ```
